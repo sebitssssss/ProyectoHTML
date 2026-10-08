@@ -1,0 +1,1 @@
+Nosotros como idea de proyecto elegimos una red social. Estamos usando de ejemplo Instagram, la idea es hacer una aplicación donde se puede comunicar y socializar con las personas, además de compartir sobre que el usuario elija. Hay grupos, publicaciones, mensajes directos, chats, perfiles, y más
