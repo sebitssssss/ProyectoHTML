@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Red Social</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="vista-auth" class="container-fluid vh-100 p-0">
+    <div class="row g-0 h-100">
+      <div class="col-md-6 d-none d-md-block bg-portada text-white p-5">
+        <div class="d-flex flex-column justify-content-end h-100">
+          <h1 class="fw-bold fs-2">La vida es mejor cuando la compartís.</h1>
+          <p class="text-white-50">Conectá con tus amigos, descubrí nuevas personas y compartí lo que te inspira.</p>
+        </div>
+      </div>
+      <div class="col-md-6 d-flex align-items-center justify-content-center p-4 bg-white">
+        
+        <div class="w-100 max-w-400" id="contenedor-login">
+          <h2 class="fw-bold fs-4 mb-1">Qué bueno verte de nuevo</h2>
+          <p class="text-muted small mb-4">Ingresá a tu cuenta para seguir compartiendo.</p>
+          <form onsubmit="event.preventDefault(); irA2FA();">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Email</label>
+              <input type="email" class="form-control" value="lucaslopez@gmail.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Contraseña</label>
+              <input type="password" class="form-control" value="12345678" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-3">Ingresar</button>
+          </form>
+          <div class="text-center">
+            <span class="text-muted small">¿Todavía no tenés cuenta?</span>
+            <button class="btn btn-outline-secondary w-100 mt-2 py-2 fw-semibold" onclick="mostrarFormAuth('registro')">Crear cuenta</button>
+          </div>
+        </div>
+
+        <div class="w-100 max-w-400 d-none" id="contenedor-registro">
+          <h2 class="fw-bold fs-4 mb-1">Tu próxima conexión empieza acá</h2>
+          <p class="text-muted small mb-4">Creá tu cuenta. Es simple, gratis y a tu ritmo.</p>
+          <form onsubmit="event.preventDefault(); irA2FA();">
+            <div class="mb-2">
+              <label class="form-label small fw-semibold">Email</label>
+              <input type="email" class="form-control" value="lucaslopez@gmail.com" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small fw-semibold">Nombre de usuario</label>
+              <input type="text" class="form-control" value="lucaslopez" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Contraseña</label>
+              <input type="password" class="form-control" value="12345678" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-3">Crear cuenta</button>
+          </form>
+          <div class="text-center">
+            <span class="text-muted small">¿Ya tenés cuenta?</span>
+            <a href="#" class="text-decoration-none fw-semibold small text-primary" onclick="mostrarFormAuth('login')">Ingresar</a>
+          </div>
+        </div>
+
+        <div class="w-100 max-w-400 d-none" id="contenedor-2fa">
+          <h2 class="fw-bold fs-4 mb-1">Un paso más para entrar</h2>
+          <p class="text-muted small mb-3">Ingresá el código de tu aplicación de autenticación.</p>
+          <div class="mb-3">
+            <span class="badge bg-light text-primary border border-primary-subtle fw-normal py-1 px-2">
+              <i class="bi bi-shield-check me-1"></i> Verificación de dos pasos activada
+            </span>
+          </div>
+          <form onsubmit="event.preventDefault(); cambiarVista('app');">
+            <label class="form-label small fw-semibold d-block mb-2">Código de 6 dígitos</label>
+            <div class="d-flex gap-2 mb-3 justify-content-between">
+              <input type="text" class="form-control text-center fs-5 fw-bold p-2" maxlength="1" value="4">
+              <input type="text" class="form-control text-center fs-5 fw-bold p-2" maxlength="1" value="8">
+              <input type="text" class="form-control text-center fs-5 fw-bold p-2" maxlength="1" value="2">
+              <input type="text" class="form-control text-center fs-5 fw-bold p-2" maxlength="1" value="1">
+              <input type="text" class="form-control text-center fs-5 fw-bold p-2" maxlength="1" value="0">
+              <input type="text" class="form-control text-center fs-5 fw-bold p-2 border-primary" maxlength="1" value="6">
+            </div>
+            <p class="text-muted style-micro mb-3">Estás ingresando como <strong>lucaslopez</strong>. Este paso se solicita solo si tenés 2FA activo.</p>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-2">Verificar e ingresar</button>
+            <div class="text-center mb-3">
+              <a href="#" class="small text-decoration-none text-primary">Usar un código de recuperación</a>
+            </div>
+            <button type="button" class="btn btn-outline-secondary w-100 py-2 fw-semibold btn-sm" onclick="mostrarFormAuth('login')">Volver a iniciar sesión</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="vista-app" class="d-none">
+    <nav class="navbar navbar-expand bg-white border-bottom sticky-top py-2 px-3">
+      <div class="container-fluid">
+        <a class="navbar-brand text-primary fw-bold fs-4 me-3" href="#" onclick="irSeccion('feed')"><i class="bi bi-triangle-fill"></i></a>
+        <input class="form-control bg-light border-0 me-3" type="search" placeholder="Buscar personas, publicaciones o grupos..." style="max-width: 320px;">
+        <div class="ms-auto d-flex align-items-center gap-3">
+          <button class="btn btn-light rounded-circle position-relative" onclick="irSeccion('notificaciones')">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger" style="font-size: 0.55rem; padding: 3px 5px;">1</span>
+          </button>
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" class="rounded-circle cursor-pointer" width="36" height="36" onclick="irSeccion('profile')">
+          <button class="btn btn-outline-danger btn-sm px-3" onclick="cambiarVista('auth')">Salir</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <aside class="col-md-3 col-lg-2 sidebar p-3 d-none d-md-block">
+          <ul class="nav flex-column gap-1">
+            <li><a class="nav-link active" id="nav-feed" onclick="irSeccion('feed')"><i class="bi bi-house-door me-2"></i> Inicio</a></li>
+            <li><a class="nav-link" id="nav-profile" onclick="irSeccion('profile')"><i class="bi bi-person me-2"></i> Perfil</a></li>
+            <li><a class="nav-link" id="nav-friends" onclick="irSeccion('friends')"><i class="bi bi-people me-2"></i> Amigos</a></li>
+            <li><a class="nav-link" id="nav-messages" onclick="irSeccion('messages')"><i class="bi bi-chat-dots me-2"></i> Mensajes</a></li>
+            <li><a class="nav-link" id="nav-groups" onclick="irSeccion('groups')"><i class="bi bi-grid me-2"></i> Grupos</a></li>
+            <li><a class="nav-link" id="nav-notificaciones" onclick="irSeccion('notificaciones')"><i class="bi bi-bell me-2"></i> Notificaciones</a></li>
+            <li><a class="nav-link" id="nav-settings" onclick="irSeccion('settings')"><i class="bi bi-gear me-2"></i> Configuración</a></li>
+          </ul>
+        </aside>
+
+        <main class="col-md-9 col-lg-10 p-4">
+          <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+              <div class="seccion-app active" id="sec-feed">
+                <div class="card border-0 shadow-sm mb-4 p-3">
+                  <div class="d-flex gap-2">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" class="rounded-circle" width="40" height="40">
+                    <input type="text" id="inputPost" class="form-control bg-light border-0" placeholder="¿Qué estás pensando, Lucas?">
+                  </div>
+                  <hr class="my-2 text-muted opacity-25">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn btn-sm btn-light text-muted border-0"><i class="bi bi-image text-success me-1"></i> Foto</button>
+                    <button class="btn btn-primary btn-sm px-4" onclick="publicar()">Publicar</button>
+                  </div>
+                </div>
+
+                <div id="muroPosts">
+                  <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-3">
+                        <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&q=80" class="rounded-circle me-2" width="40" height="40">
+                        <div>
+                          <h6 class="mb-0 fw-bold">santiagogomez</h6>
+                          <small class="text-muted">Hace 2 horas</small>
+                        </div>
+                      </div>
+                      <p class="card-text">Paseo de fin de semana por las hermosas calles de la ciudad.</p>
+                      <div class="row g-2 mb-3">
+                        <div class="col-6"><img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80" class="img-grid"></div>
+                        <div class="col-6"><img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&q=80" class="img-grid"></div>
+                      </div>
+                      <div class="d-flex justify-content-between text-muted small border-bottom pb-2 mb-2">
+                        <span class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalReacciones"><i class="bi bi-heart-fill text-danger me-1"></i> <span id="numLikes">12</span> Reacciones</span>
+                        <span>3 Comentarios</span>
+                      </div>
+                      <div class="d-flex justify-content-around">
+                        <button class="btn btn-light btn-sm w-100 border-0 text-muted" onclick="darLike(this)"><i class="bi bi-heart me-1"></i> Me gusta</button>
+                        <button class="btn btn-light btn-sm w-100 border-0 text-muted"><i class="bi bi-chat me-1"></i> Comentar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="seccion-app" id="sec-profile">
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                  <div class="bg-portada-perfil"></div>
+                  <div class="card-body pt-0 px-4 pb-3">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                      <div class="avatar-container">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80" class="rounded-circle avatar-perfil">
+                      </div>
+                      <button class="btn btn-outline-secondary btn-sm px-3" onclick="irSeccion('settings')"><i class="bi bi-pencil me-1"></i> Editar perfil</button>
+                    </div>
+                    <h5 class="fw-bold mb-0">lucaslopez</h5>
+                    <p class="text-muted small mb-2">Programador profesional</p>
+                    <div class="d-flex gap-4 text-muted small">
+                      <span><strong>142</strong> Amigos</span>
+                      <span><strong>38</strong> Publicaciones</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="seccion-app" id="sec-friends">
+                <h4 class="fw-bold mb-3 fs-5">Amigos</h4>
+                <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&q=80" class="rounded-circle" width="50" height="50">
+                    <div>
+                      <h6 class="mb-0 fw-bold">santiagogomez</h6>
+                      <small class="text-muted">15 amigos en común</small>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary btn-sm px-3">Mensaje</button>
+                </div>
+              </div>
+
+              <div class="seccion-app" id="sec-messages">
+                <div class="card border-0 shadow-sm p-3">
+                  <h6 class="fw-bold border-bottom pb-2">Chat con santiagogomez</h6>
+                  <div class="caja-chat mb-3 p-3 bg-light" id="cajaChat">
+                    <div class="mensaje recibido mb-2 p-2 bg-white shadow-sm">Hola Lucas, ¿cómo va tu día?</div>
+                    <div class="mensaje enviado mb-2 p-2 bg-primary text-white shadow-sm text-end">Hola Santiago, todo tranquilo.</div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <input type="text" id="inputMsg" class="form-control bg-light border-0" placeholder="Escribe un mensaje..." onkeypress="if(event.key==='Enter')enviarMsg()">
+                    <button class="btn btn-primary px-4" onclick="enviarMsg()">Enviar</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="seccion-app" id="sec-groups">
+                <h4 class="fw-bold mb-3 fs-5">Grupos</h4>
+                <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between">
+                  <div>
+                    <h6 class="mb-0 fw-bold">Fotografía Urbana</h6>
+                    <small class="text-muted">3,450 miembros</small>
+                  </div>
+                  <button class="btn btn-outline-primary btn-sm px-3">Unido</button>
+                </div>
+              </div>
+
+              <div class="seccion-app" id="sec-notificaciones">
+                <h4 class="fw-bold mb-3 fs-5">Notificaciones</h4>
+                <div class="card border-0 shadow-sm p-3 d-flex align-items-center gap-3">
+                  <i class="bi bi-heart-fill text-danger fs-5"></i>
+                  <div>
+                    <p class="mb-0"><strong>santiagogomez</strong> reaccionó a tu publicación.</p>
+                    <small class="text-muted">Hace 10 minutos</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="seccion-app" id="sec-settings">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <h4 class="fw-bold fs-5 mb-0">Editar perfil</h4>
+                    <small class="text-muted">Tu perfil, a tu manera. Elegí cómo querés presentarte.</small>
+                  </div>
+                  <button class="btn btn-outline-secondary btn-sm px-3" onclick="irSeccion('profile')">Volver al perfil</button>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-7">
+                    <div class="card border-0 shadow-sm p-4">
+                      <h5 class="fw-bold fs-6 mb-3">Información personal</h5>
+                      
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold">Nombre de usuario</label>
+                        <input type="text" class="form-control" value="lucaslopez">
+                      </div>
+                      
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold">Biografía</label>
+                        <textarea class="form-control" rows="3">Programador profesional.</textarea>
+                        <small class="text-muted style-micro">Quedan 84 para sonreír (99/200 caracteres)</small>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold">Fecha de nacimiento</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control" value="18 / 05 / 1998">
+                          <span class="input-group-text bg-white border-start-0 text-muted"><i class="bi bi-calendar3"></i></span>
+                        </div>
+                      </div>
+                      
+                      <div class="mb-4">
+                        <label class="form-label small fw-semibold">País</label>
+                        <select class="form-select">
+                          <option selected>Argentina</option>
+                          <option>Uruguay</option>
+                          <option>Chile</option>
+                          <option>España</option>
+                        </select>
+                      </div>
+
+                      <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-outline-secondary btn-sm px-3" onclick="irSeccion('profile')">Cancelar</button>
+                        <button class="btn btn-primary btn-sm px-3" onclick="alert('Cambios guardados')">Guardar cambios</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-5">
+                    <div class="card border-0 shadow-sm p-4 text-center">
+                      <h5 class="fw-bold fs-6 mb-3 text-start">Foto de perfil</h5>
+                      
+                      <div class="d-flex justify-content-center mb-2">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80" class="rounded-circle border" width="90" height="90" style="object-fit: cover;">
+                      </div>
+                      
+                      <a href="#" class="style-micro text-decoration-none text-muted mb-3 d-block">Quitar avatar</a>
+                      
+                      <input type="file" id="inputFotoPerfil" class="d-none" accept="image/jpeg,image/png" onchange="subirFotoPerfil(this)">
+                      <button class="btn btn-outline-secondary btn-sm w-100 mb-2" onclick="document.getElementById('inputFotoPerfil').click()"><i class="bi bi-upload me-1"></i> Subir archivo</button>
+                      <small class="text-muted d-block mb-3 style-micro">JPG o PNG. Hasta 5 MB.</small>
+                      
+                      <div class="text-start border-top pt-3">
+                        <span class="style-micro fw-semibold text-muted d-block mb-1">Usar URL:</span>
+                        <label class="form-label style-micro text-muted mb-1">URL de la imagen</label>
+                        <input type="text" class="form-control form-control-sm mb-1" value="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde">
+                        <small class="text-muted style-micro d-block mb-2">Pegá el enlace público de tu nueva foto.</small>
+                        <button class="btn btn-outline-secondary btn-sm w-100">Cargar vista previa</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalReacciones" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold">Reacciones</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="small fw-semibold">sofiaperez</span>
+            <i class="bi bi-heart-fill text-danger"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function cambiarVista(vista) {
+      document.getElementById('vista-auth').classList.toggle('d-none', vista === 'app');
+      document.getElementById('vista-app').classList.toggle('d-none', vista === 'auth');
+    }
+    function mostrarFormAuth(form) {
+      document.getElementById('contenedor-login').classList.add('d-none');
+      document.getElementById('contenedor-registro').classList.add('d-none');
+      document.getElementById('contenedor-2fa').classList.add('d-none');
+      document.getElementById('contenedor-' + form).classList.remove('d-none');
+    }
+    function irA2FA() {
+      mostrarFormAuth('2fa');
+    }
+    function irSeccion(sec) {
+      document.querySelectorAll('.seccion-app').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
+      document.getElementById('sec-' + sec).classList.add('active');
+      const nav = document.getElementById('nav-' + sec);
+      if(nav) nav.classList.add('active');
+    }
+    function publicar() {
+      const txt = document.getElementById('inputPost');
+      if(!txt.value.trim()) return;
+      document.getElementById('muroPosts').insertAdjacentHTML('afterbegin', `
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-1">lucaslopez</h6>
+            <p class="card-text">${txt.value}</p>
+          </div>
+        </div>
+      `);
+      txt.value = '';
+    }
+    function darLike(btn) {
+      const span = document.getElementById('numLikes');
+      let n = parseInt(span.innerText);
+      btn.classList.toggle('text-danger');
+      span.innerText = btn.classList.contains('text-danger') ? n + 1 : n - 1;
+    }
+    function enviarMsg() {
+      const inp = document.getElementById('inputMsg');
+      if(!inp.value.trim()) return;
+      document.getElementById('cajaChat').innerHTML += `<div class="mensaje enviado mb-2 p-2 bg-primary text-white shadow-sm text-end">${inp.value}</div>`;
+      inp.value = '';
+    }
+    function subirFotoPerfil(input) {
+      const archivo = input.files[0];
+      if (!archivo) return;
+      if (!['image/jpeg', 'image/png'].includes(archivo.type)) {
+        alert('Solo se permiten archivos JPG o PNG.');
+        input.value = '';
+        return;
+      }
+      if (archivo.size > 5 * 1024 * 1024) {
+        alert('La imagen no puede superar los 5 MB.');
+        input.value = '';
+        return;
+      }
+      const datos = new FormData();
+      datos.append('foto', archivo);
+      input.value = '';
+      fetch('subir_foto_perfil.php', { method: 'POST', body: datos })
+        .then(r => r.json())
+        .then(res => {
+          if (!res.ok) throw new Error();
+          document.querySelector('#sec-settings img.rounded-circle.border').src = res.url;
+        })
+        .catch(() => alert('No se pudo subir la foto.'));
+    }
+  </script>
+</body>
+</html>
